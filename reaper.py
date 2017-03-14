@@ -35,7 +35,7 @@ def detect_consul_version():
 def reap(a):
     logger.debug("Reaping stale ips in RAFT Layer {0}".format(a))
     cmd="/usr/local/bin/consul operator raft -remove-peer -address={0}".format(a)
-    logging.debug("Running: {0}.format(cmd))
+    logging.debug("Running: {0}".format(cmd))
     p=Popen(cmd.split(),stdout=PIPE,stderr=PIPE)
     sout,serr=p.communicate()
     logging.debug(sout)
@@ -57,7 +57,11 @@ def check_stale_ips_in_raft():
             if m is not None:
                ip=m.group('ip') 
                reap(ip)
-     logging.debug("Dead Peers: {0}".format(ctr-1))
+     if ctr > 0:
+	logging.debug("Dead Peers: {0}".format(ctr-1))
+     else:
+	logging.debug("No Dead Peers to Reap")	
+
     except Exception as err:
       logger.debug("Error Occured",err)
       pass
